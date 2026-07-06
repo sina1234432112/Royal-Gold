@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Fire | لوکس و باشکوه</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+		/* افکت لرزش و حرکت کارت‌ها */
+.card {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.card:hover {
+    transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+    box-shadow: 0 25px 50px rgba(212, 175, 55, 0.2);
+}
+
+/* ایجاد عمق برای متن داخل کارت */
+.card h3, .card p {
+    transform: translateZ(50px); /* متن‌ها از صفحه بیرون می‌آیند */
+}
+
+/* استایل بخش آمار (Statistics) که در گام بعدی می‌سازیم */
+.stats-section {
+    padding: 60px 0;
+    display: flex;
+    justify-content: space-around;
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+    margin: 50px 0;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: var(--gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+        :root {
+            --gold: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --gold-solid: #d4af37;
+            --dark-bg: #0a0a0a;
+            --fire-orange: #ff4500;
+            --fire-yellow: #ff8c00;
+            --text-light: #f5f5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* افکت پس‌زمینه آتش (Embers/Particles) */
+        .fire-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a0a00 0%, #000000 100%);
+            overflow: hidden;
+        }
+
+        .ember {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--fire-yellow);
+            border-radius: 50%;
+            opacity: 0.6;
+            filter: blur(1px);
+            animation: rise var(--duration) infinite ease-in;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(100vh) scale(1); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(0); opacity: 0; }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navbar */
+        nav {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: var(--gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: var(--gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: #ccc;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Golden Button */
+        .btn-gold {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: var(--gold);
+            border: none;
+            border-radius: 50px;
+            color: #000;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.4s;
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-gold:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.7);
+        }
+
+        /* Card Section (Premium Showcase) */
+        .showcase {
+            padding: 100px 0;
+        }
+        <!-- Statistics Section -->
+        <section class="stats-section">
+            <div class="container" style="display: flex; justify-content: space-around; width: 100%; flex-wrap: wrap;">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="150">0</span>
+                    <span class="stat-label">پروژه موفق</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="85">0</span>
+                    <span class="stat-label">مشتریان راضی</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="12">0</span>
+                    <span class="stat-label">سال تجربه</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="100">0</span>
+                    <span class="stat-label%20%20">درصد کیفیت</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section (Glassmorphism Style) -->
+		        <!-- FAQ Section (Accordion Style) -->
+        <section id="faq" class="faq-section">
+            <div class="container">
+                <h2 class="section-title" style="text-align: center; color: var(--gold); margin-bottom: 50px;">سوالات متداول</h2>
+                
+                <div class="faq-container">
+                    <!-- Question 1 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>زمان تقریبی انجام پروژه چقدر است؟</span>
+                            <span class="faq-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>زمان انجام هر پروژه بستگی به ابعاد و پیچیدگی آن دارد، اما به طور میانگین پروژه‌های استاندارد بین ۴ تا ۸ هفته زمان می‌برند.</p>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>آیا پشتیبانی پس از اتمام پروژه انجام می‌شود؟</span>
+                            <span class="faq-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>بله، ما پس از اتمام پروژه، ۳ ماه پشتیبانی فنی رایگان برای رفع هرگونه اشکال یا بروزرسانی‌های کوچک ارائه می‌دهیم.</p>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>هزینه‌ها چگونه محاسبه می‌شوند؟</span>
+                            <span class="faq-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>هزینه‌ها بر اساس نیازهای سفارشی شما، نوع تکنولوژی مورد استفاده و سطح پیچیدگی پروژه محاسبه و در جلسه مشاوره اعلام می‌شود.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials-section">
+            <div class="container">
+                <h2 class="section-title" style="text-align: center; color: var(--gold); margin-bottom: 50px;">سخن مشتریان ما</h2>
+                <div class="testimonials-grid">
+                    
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card">
+                        <div class="quote-icon">“</div>
+                        <p class="testimonial-text">طراحی این سایت واقعاً فراتر از انتظار من بود. ترکیب رنگ طلایی و افکت‌های آتشین حس قدرت به برند من داد.</p>
+                        <div class="client-info">
+                            <div class="client-avatar">A</div>
+                            <div>
+                                <h4 class="client-name">احمد رضایی</h4>
+                                <p class="client-role">مدیر اجرایی شرکت X</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card">
+                        <div class="quote-icon">“</div>
+                        <p class="testimonial-text">سرعت بالا و دقت در جزئیات خیره‌کننده بود. واقعاً یک تیم حرفه‌ای و هنرمند هستند.</p>
+                        <div class="client-info">
+                            <div class="client-avatar">S</div>
+                            <div>
+                                <h4 class="client-name">سارا محمدی</h4>
+                                <p class="client-role">طراح مد و فشن</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            transition: 0.5s;
+        }
+
+        .card:hover {
+            border-color: var(--gold-solid);
+            transform: translateY(-10px);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--gold-solid);
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            color: #555;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+        }
+		        /* Contact Section Styles */
+        .contact-section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .contact-box {
+            background: rgba(20, 20, 20, 0.7); /* حالت شیشه‌ای تیره */
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.3); /* حاشیه طلایی کمرنگ */
+            padding: 50px;
+            border-radius: 30px;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 
+                        0 0 20px rgba(212, 175, 55, 0.1); /* درخشش ملایم دور باکس */
+        }
+
+        .contact-title {
+            font-size: 2.5rem;
+            background: var(--gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .contact-subtitle {
+            color: #aaa;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        #contact-form input, 
+        #contact-form textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+
+        #contact-form input:focus, 
+        #contact-form textarea:focus {
+            border-color: var(--gold-solid);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        #contact-form button {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* Responsive for Contact */
+        @media (max-width: 600px) {
+            .contact-box { padding: 30px 20px; }
+            .contact-title { font-size: 1.8rem; }
+        }
+        /* Testimonials Styles */
+        .testimonials-section {
+            padding: 100px 0;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 25px;
+            position: relative;
+            transition: 0.4s;
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .quote-icon {
+            font-size: 4rem;
+            color: var(--gold);
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .client-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .client-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--gold), var(--fire-orange));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .client-name {
+            color: white;
+            margin: 0;
+        }
+
+        .client-role {
+            color: var(--gold);
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        /* Responsive for Stats */
+        @media (max-width: 768px) {
+            .stats-section .container { flex-direction: column; gap: 30px; }
+        }
+        /* FAQ Styles */
+        .faq-section {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--gold);
+        }
+
+        .faq-question {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+            user-select: none;
+        }
+
+        .faq-icon {
+            font-size: 1.5rem;
+            color: var(--gold);
+            transition: 0.3s;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0 25px;
+        }
+
+        .faq-answer p {
+            color: #bbb;
+            line-height: 1.8;
+            padding-bottom: 20px;
+        }
+
+        /* Active State for FAQ */
+        .faq-item.active .faq-answer {
+            max-height: 200px; /* مقدار تقریبی برای باز شدن */
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+            color: var(--fire-orange);
+        }
+
+        /* Reveal Animation Class */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- پس‌زمینه آتش -->
+    <div class="fire-bg" id="fireBg"></div>
+
+    <div class="container">
+        <nav>
+			<!-- این دکمه را در کنار دکمه‌های قبلی در بخش Hero قرار بده -->
+<a href="diamond.html" class="btn-diamond-style" style="background: linear-gradient(45deg, #00d4ff, #ffffff); color: #001219; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-right: 15px; display: inline-block;">
+    ورود به دنیای الماس 💎
+</a>
+
+            <div class="logo">ROYAL<span style="color: #fff;">FIRE</span></div>
+            <div style="color: var(--gold-solid); font-weight: bold;">VIP ACCESS</div>
+        </nav>
+
+        <header class="hero">
+            <h1>شکوهِ طلایی در قلبِ آتش</h1>
+            <p>طراحی تجربه‌هایی که فراتر از رویا هستند. ترکیب قدرت آتش با ظرافت طلا.</p>
+            <a href="#" class="btn-gold">ورود به دنیای ملوکانه</a>
+        </header>
+
+        <section class="showcase">
+            <div class="grid">
+                <div class="card">
+                    <h3>خدمات ویژه</h3>
+                    <p>طراحی اختصاصی برای برندهای تراز اول جهانی.</p>
+                </div>
+                <div class="card">
+                    <h3>کیفیت بی‌رقیب</h3>
+                    <p>استفاده از استانداردهای طلایی در تمامی مراحل تولید.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--gold-solid);">تحویل سریع</h3>
+                    <p>سرعت و قدرت در اجرا، همراه با دقت بی‌نظیر.</p>
+                </div>
+            </div>
+        </section>
+        <!-- Contact Section (Golden Fire Theme) -->
+      <section id="contact" class="contact-section">
+    <div class="container">
+        <div class="contact-box">
+            <h2 class="contact-title">شروع پروژه رویایی شما</h2>
+            <p class="contact-subtitle">اطلاعات خود را بفرستید تا شعله‌ی موفقیت شما را روشن کنیم.</p>
+            
+            <!-- استفاده از روش Mailto به جای فرم معمولی -->
+            <form action="mailto:sinabagherpour75@gmail.com" method="GET" id="contact-form" class="glass-form">
+                <div class="input-group">
+                    <input type="text" name="subject" placeholder="موضوع: درخواست پروژه جدید" required>
+                </div>
+                <div class="input-group">
+                    <textarea name="body" placeholder="جزئیات پروژه خود را اینجا بنویسید..." rows="5" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-gold">ارسال از طریق ایمیل من</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+        <footer>
+            <p>© 2026 تمامی حقوق برای <span style="color: var(--gold-solid);">Royal Fire</span> محفوظ است.</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Designed for Luxury & Power</p>
+        </footer>
+    </div>
+
+    <script>
+        /* 
+           =========================================
+           FIRE PARTICLES ENGINE (سیستم تولید ذرات آتش)
+           =========================================
+        */
+
+        const fireBg = document.getElementById('fireBg');
+        const particleCount = 50; // تعداد ذرات آتش
+
+        function createEmber() {
+            const ember = document.createElement('div');
+            ember.classList.add('ember');
+            
+            // تنظیمات تصادفی برای هر ذره آتش
+            const size = Math.random() * 5 + 2 + 'px';
+            const left = Math.random() * 100 + '%';
+            const duration = Math.random() * 3 + 2 + 's'; // سرعت حرکت از 2 تا 5 ثانیه
+            const delay = Math.random() * 5 + 's';
+            
+            // انتخاب رنگ تصادفی بین طیف نارنجی و زرد
+            const colors = ['#ff4500', '#ff8c00', '#ffae00', '#ffd700'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            ember.style.width = size;
+            ember.style.height = size;
+            ember.style.left = left;
+            ember.style.setProperty('--duration', duration);
+            ember.style.animationDelay = delay;
+            ember.style.backgroundColor = color;
+            ember.style.boxShadow = `0 0 10px ${color}`;
+
+            fireBg.appendChild(ember);
+
+            // حذف ذره از صفحه بعد از اتمام انیمیشن برای جلوگیری از سنگین شدن مرورگر
+            setTimeout(() => {
+                ember.remove();
+            }, (parseFloat(duration) + parseFloat(delay)) * 1000);
+        }
+
+        // ایجاد مداوم ذرات آتش
+        setInterval(createEmber, 150);
+
+        /* 
+           =========================================
+           SMOOTH REVEAL ON SCROLL
+           =========================================
+        */
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // اعمال افکت ظاهر شدن آرام برای کارت‌ها
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.8s ease-out';
+            observer.observe(card);
+        });
+		        // Contact Form Submission
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // ایجاد افکت ساده برای دکمه هنگام ارسال
+                const btn = contactForm.querySelector('button');
+                const originalText = btn.innerText;
+                btn.innerText = 'در حال ارسال...';
+                btn.style.opacity = '0.7';
+
+                setTimeout(() => {
+                    alert('🔥 درخواست شما با موفقیت ثبت شد! تیم طلایی ما به زودی با شما تماس می‌گیرد.');
+                    btn.innerText = originalText;
+                    btn.style.opacity = '1';
+                    contactForm.reset();
+                }, 2000);
+            });
+        }
+/* 
+   =========================================
+   3D TILT EFFECT (افکت چرخش سه بعدی کارت‌ها)
+   =========================================
+*/
+const cards = document.querySelectorAll('.card');
+
+cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; // موقعیت ماوس در عرض کارت
+        const y = e.clientY - rect.top;  // موقعیت ماوس در ارتفاع کارت
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // محاسبه زاویه چرخش (بسیار ملایم برای حس لوکس بودن)
+        const rotateX = (centerY - y) / 15; 
+        const rotateY = (x - centerX) / 15;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)`;
+    });
+});
+        /* 
+           =========================================
+           COUNTER ANIMATION (انیمیشن اعداد شمارنده)
+           =========================================
+        */
+        const counters = document.querySelectorAll('.stat-number');
+        const speed = 200; // سرعت شمارش
+
+        const startCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 1);
+                    } else {
+                        counter.innerText = target + (target === 100 ? '%' : '+');
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        // اجرای انیمیشن فقط وقتی کاربر به بخش آمار رسید
+        const statsSection = document.querySelector('.stats-section');
+        const statsObserver = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting) {
+                startCounters();
+                statsObserver.unobserve(statsSection); // فقط یکبار اجرا شود
+            }
+        }, { threshold: 0.5 });
+
+        statsObserver.observe(statsSection);
+        /* 
+           =========================================
+           FAQ ACCORDION LOGIC
+           =========================================
+        */
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                // بستن سایر آیتم‌های باز شده (اختیاری - برای تمیز بودن)
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+
+                // باز یا بسته کردن آیتم فعلی
+                item.classList.toggle('active');
+            });
+        });
+
+        /* 
+           =========================================
+           SCROLL REVEAL ANIMATION (ظاهر شدن بخش‌ها هنگام اسکرول)
+           =========================================
+        */
+        const revealElements = document.querySelectorAll('.card, .testimonial-card, .faq-item, .stat-item, .section-title');
+
+        const revealOnScroll = () => {
+            const triggerBottom = window.innerHeight / 5 * 4;
+
+            revealElements.forEach(el => {
+                const elTop = el.getBoundingClientRect().top;
+
+                if (elTop < triggerBottom) {
+                    el.classList.add('active');
+                    // اگر از کلاس .reveal در HTML استفاده کردید، اینجا فعال می‌شود
+                    el.classList.add('reveal-active'); 
+                }
+            });
+        };
+
+        // اضافه کردن کلاس اولیه برای انیمیشن (اگر قبلاً در CSS تعریف نشده)
+        revealElements.forEach(el => {
+            el.classList.add('reveal');
+        });
+
+        window.addEventListener('scroll', revealOnScroll);
+        // یکبار اجرا برای بخش‌هایی که در دید هستند
+        revealOnScroll();
+
+    </script>
+	<p align="center" style="font-size: 20px">توجه داشته باشید موقع ایمیل زدن برنامه gmail روی دستگاه شما نصب باشد</p>
+</body>
+</html>
